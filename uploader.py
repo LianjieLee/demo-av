@@ -1,9 +1,7 @@
 import os
 import sys
-import glob
 
-import requests
-from faker import Faker
+from glob import glob
 from telethon import TelegramClient, sync
 
 # https://docs.telethon.dev/en/latest/concepts/sessions.html
@@ -19,6 +17,7 @@ if __name__ == '__main__':
     api_hash = os.getenv('API_HASH')
     peer_name = sys.argv[1]
     caption = sys.argv[2]
-    video_list = glob.glob("*.mp4")
+    video_list = glob("*.mp4")
+    video_list.sort()
     print(f"sending {video_list}", flush=True)
     send_video(api_id, api_hash, peer_name, video_list, caption)
