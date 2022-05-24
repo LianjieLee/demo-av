@@ -1,6 +1,6 @@
 import os
-from pickle import TRUE
 import sys
+import glob
 
 import requests
 from faker import Faker
@@ -18,7 +18,7 @@ if __name__ == '__main__':
     api_id = os.getenv('API_ID')
     api_hash = os.getenv('API_HASH')
     peer_name = sys.argv[1]
-    video = sys.argv[2]
-    caption = sys.argv[3]
-    print(f"sending {video.split()}", flush=True)
-    send_video(api_id, api_hash, peer_name, video.split(), caption)
+    caption = sys.argv[2]
+    video_list = glob.glob("*.mp4")
+    print(f"sending {video_list}", flush=True)
+    send_video(api_id, api_hash, peer_name, video_list, caption)
