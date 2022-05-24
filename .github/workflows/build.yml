@@ -37,7 +37,7 @@ jobs:
         run: |
             aria2c --conf-path=./aria2/aria2.conf "${{ github.event.inputs.url }}"
             mv ${{ github.event.inputs.video }} ./tmp.mp4
-            bash split.sh ./tmp.mp4 2000000000 "-c copy" && rm ./tmp.mp4
+            bash split.sh ./tmp.mp4 300000000 "-c copy" && rm ./tmp.mp4
             ls  -ll
 
       - name: Start task
