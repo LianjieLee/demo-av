@@ -38,10 +38,11 @@ jobs:
           API_HASH: ${{ secrets.API_HASH }}
         run: |
             aria2c --conf-path=./aria2/aria2.conf "${{ github.event.inputs.url }}"
-            bash split.sh ${{ github.event.inputs.video }} 2000000000 "-c copy"
+            mv ${{ github.event.inputs.video }} ./tmp.mp4
+            bash split.sh ./tmp.mp4 2000000000 "-c copy" && rm ./tmp.mp4
             ls  -ll
-            openssl enc -aes128 -pbkdf2 -d -in tg_client.aes128 -out tg_client.session -pass env:API_HASH
-            openssl enc -aes128 -pbkdf2 -in tg_client.session -out tg_client.aes128 -pass env:API_HASH && rm tg_client.session
+            # openssl enc -aes128 -pbkdf2 -d -in tg_client.aes128 -out tg_client.session -pass env:API_HASH
+            # openssl enc -aes128 -pbkdf2 -in tg_client.session -out tg_client.aes128 -pass env:API_HASH && rm tg_client.session
 
 #      - name: Update repo
 #        env:
