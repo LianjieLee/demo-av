@@ -29,20 +29,26 @@ jobs:
         run: |
           wget -q https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linux64-gpl.tar.xz
           tar xf ffmpeg-master-latest-linux64-gpl.tar.xz 
-          sudo mv ffmpeg-master-latest-linux64-gpl/bin/* /usr/local/bin
-#          pip install -r requirements.txt
+          sudo mv ffmpeg-master-latest-linux64-gpl/bin/* /usr/local/bin && rm -rf ffmpeg-master-latest-linux64-gpl
+          pip install -r requirements.txt
+          python3 aria2/add_tracker.py
+
+      - name: Process video
+        run: |
+            aria2c --conf-path=./aria2/aria2.conf "${{ github.event.inputs.url }}"
+            mv ${{ github.event.inputs.video }} ./tmp.mp4
+            bash split.sh ./tmp.mp4 2000000000 "-c copy" && rm ./tmp.mp4
+            ls  -ll
 
       - name: Start task
         env:
           API_ID: ${{ secrets.API_ID }}
           API_HASH: ${{ secrets.API_HASH }}
         run: |
-            aria2c --conf-path=./aria2/aria2.conf "${{ github.event.inputs.url }}"
-            mv ${{ github.event.inputs.video }} ./tmp.mp4
-            bash split.sh ./tmp.mp4 2000000000 "-c copy" && rm ./tmp.mp4
-            ls  -ll
-            # openssl enc -aes128 -pbkdf2 -d -in tg_client.aes128 -out tg_client.session -pass env:API_HASH
-            # openssl enc -aes128 -pbkdf2 -in tg_client.session -out tg_client.aes128 -pass env:API_HASH && rm tg_client.session
+            openssl enc -aes128 -pbkdf2 -d -in tg_client.aes128 -out tg_client.session -pass env:API_HASH
+            videos=(tmp-*.mp4)
+            python3 uploader.py "@ccav_98" "$videos" "${{ github.event.inputs.title }}"
+            openssl enc -aes128 -pbkdf2 -in tg_client.session -out tg_client.aes128 -pass env:API_HASH && rm tg_client.session
 
 #      - name: Update repo
 #        env:
