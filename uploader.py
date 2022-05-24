@@ -7,7 +7,7 @@ from telethon import TelegramClient, sync
 
 # https://docs.telethon.dev/en/latest/concepts/sessions.html
 # sync can not omit
-def send_video(api_id, api_hash, peer_name, filepath, caption):
+def send_video(api_id, api_hash, peer_name, video_list, caption):
     client = TelegramClient("tg_client", api_id, api_hash)
     client.start()
     client.connect()
