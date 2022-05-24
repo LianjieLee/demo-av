@@ -1,4 +1,5 @@
 import os
+from pickle import TRUE
 import sys
 
 import requests
@@ -19,4 +20,5 @@ if __name__ == '__main__':
     peer_name = sys.argv[1]
     video = sys.argv[2]
     caption = sys.argv[3]
+    print(f"sending {video}", flush=True)
     send_video(api_id, api_hash, peer_name, video.split(), caption)
