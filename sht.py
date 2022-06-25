@@ -18,7 +18,7 @@ class sehuatang:
     def getNewPost(self):
         hd = {'Referer': 'https://www.sehuatang.net/index.php'}
         self.header.update(hd)
-        r = requests.get(self.url + 'forum-103-1.html', headers=self.header)
+        r = requests.get(self.url + 'forum-103-2.html', headers=self.header)
         soup = BeautifulSoup(r.text, 'html.parser')
         thread_list = soup.find('div', {'id': 'threadlist'})
         post_list = thread_list.find_all('tbody', {'id': re.compile(r'normalthread_\d*?')})
