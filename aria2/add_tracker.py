@@ -4,8 +4,10 @@ import requests
 def add_tracker(mylist, url):
     with requests.get(url) as r:
         trackers = ','.join( mylist + r.text.split('\n\n') )
-    with open('./aria2/aria2.conf', 'a+') as f:
-        f.write(f'bt-tracker={trackers}')
+    with open('./aria2/aria2.conf') as f:
+        conf = f.read()
+    with open('./aria2/aria2t.conf', 'w') as f:
+        f.write(conf + f'bt-tracker={trackers}')
     print("tracker added!")
 
 
