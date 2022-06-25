@@ -19,6 +19,6 @@ if __name__ == '__main__':
     caption = sys.argv[2]
     video_list = glob("*.mp4")
     video_list.sort()
-    video_list.insert(0, "info/poster.jpg")
+    video_list.insert(0, "poster.jpg")
     print(f"sending {video_list}", flush=True)
     send_video(api_id, api_hash, peer_name, video_list, caption)
