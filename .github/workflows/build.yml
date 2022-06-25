@@ -28,7 +28,7 @@ jobs:
             aria2c --conf-path=./aria2/aria2.conf "$(cat info/url.txt)"
             bash split.sh ./$(cat info/name.txt)/$(cat info/name.txt).mp4 2000000000 "-c copy"
             rm ./$(cat info/name.txt)/$(cat info/name.txt).mp4
-            mv ./$(cat info/name.txt)/$(cat info/name.txt)-*.mp4 .
+            mv ./*-C/*-C*.mp4 .
 
       - name: Upload Video
         env:
