@@ -1,20 +1,6 @@
 name: Video Push
 
-on:
-  workflow_dispatch:
-    inputs:
-      url:
-        description: 'Video URL(HTTP/HTTPS OR Metalink)'
-        required: true
-      video:
-        description: 'Video File Path(Wildcard support)'
-        required: true
-      name:
-        description: 'file name'
-        required: true  
-      caption:
-        description: 'caption'
-        required: true
+on: [workflow_dispatch]
 
 jobs:
   build:
@@ -30,40 +16,42 @@ jobs:
 
       - name: Install dependence
         run: |
-          wget -q https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linux64-gpl.tar.xz
-          tar xf ffmpeg-master-latest-linux64-gpl.tar.xz 
-          sudo mv ffmpeg-master-latest-linux64-gpl/bin/* /usr/local/bin && rm -rf ffmpeg-master-latest-linux64-gpl
-          pip install -r requirements.txt
-          python3 aria2/add_tracker.py
+            wget -q https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linux64-gpl.tar.xz
+            tar xf ffmpeg-master-latest-linux64-gpl.tar.xz 
+            sudo mv ffmpeg-master-latest-linux64-gpl/bin/* /usr/local/bin && rm -rf ffmpeg-master-latest-linux64-gpl
+            pip install -r requirements.txt
+            python3 aria2/add_tracker.py
 
-      - name: Process video
+      - name: Get Video Info
         run: |
-            aria2c --conf-path=./aria2/aria2.conf "${{ github.event.inputs.url }}"
-            mv ${{ github.event.inputs.video }} ./${{ github.event.inputs.caption }}.mp4
-            bash split.sh ./${{ github.event.inputs.caption }}.mp4 20000000 "-c copy"
-            rm ./${{ github.event.inputs.caption }}.mp4
-            ls  -ll
+            python3 sht.py
 
-      - name: Start task
+      - name: Process Video
+        run: |
+            aria2c --conf-path=./aria2/aria2.conf "$(cat info/url.txt)"
+            bash split.sh ./$(cat name.txt)/$(cat info/name.txt).mp4 20000000 "-c copy"
+
+      - name: Upload Video
         env:
           API_ID: ${{ secrets.API_ID }}
           API_HASH: ${{ secrets.API_HASH }}
         run: |
             openssl enc -aes128 -pbkdf2 -d -in tg_client.aes128 -out tg_client.session -pass env:API_HASH
-            wget https://www.planetware.com/wpimages/2020/02/france-in-pictures-beautiful-places-to-photograph-eiffel-tower.jpg -O poster.jpg
-            python3 uploader.py "@ccav_98" "${{ github.event.inputs.caption }}"
+            wget $(cat poster.txt) -O poster.jpg
+            python3 uploader.py "@ccav_98" "$(cat title.txt)"
+            rm -rf ./$(cat info/name.txt) poster.jpg
             openssl enc -aes128 -pbkdf2 -in tg_client.session -out tg_client.aes128 -pass env:API_HASH && rm tg_client.session
 
-#      - name: Update repo
-#        env:
-#          ACTOR: ${{ github.actor }}
-#          REPO: ${{ github.repository }}
-#        run: |
-#          git config --local user.email "${ACTOR}@users.noreply.github.com"
-#          git config --local user.name "${ACTOR}"
-#          git add .
-#          git commit -m 'update' || exit 0
-#          git push origin main
+     - name: Update repo
+       env:
+         ACTOR: ${{ github.actor }}
+         REPO: ${{ github.repository }}
+       run: |
+          git config --local user.email "${ACTOR}@users.noreply.github.com"
+          git config --local user.name "${ACTOR}"
+          git add .
+          git commit -m 'update' || exit 0
+          git push origin main
           
 #      - name: Delete workflow runs
 #        uses: Mattraks/delete-workflow-runs@v2
