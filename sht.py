@@ -25,7 +25,8 @@ class sehuatang:
         print(self.time(), f'抓取帖子{len(post_list)}个', flush=True)
         for i in post_list:
             thread = i.tr.td.a['href']
-            if '天' not in i.tr.find('td', {'class': 'by'}).em.a.text:
+            pub_time = i.tr.find('td', {'class': 'by'}).text
+            if '天' not in pub_time:
                 continue
             if thread not in self.old_posts:
                 self.new_post = thread
