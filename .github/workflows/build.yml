@@ -25,8 +25,15 @@ jobs:
 
       - name: Process Video
         run: |
-            aria2c --conf-path=./aria2/aria2.conf "$(cat info/url.txt)"
-            bash split.sh ./$(cat name.txt)/$(cat info/name.txt).mp4 20000000 "-c copy"
+            # aria2c --conf-path=./aria2/aria2.conf "$(cat info/url.txt)"
+            
+            python ./qBittorrent/dl_qbee.py && chmod +x qbittorrent-nox
+            ./qbittorrent-nox --profile=. -d "${{ github.event.inputs.url }}"
+            python ./qBittorrent/stats.py
+            bash split.sh ./qBittorrent/downloads/$(cat name.txt)/$(cat info/name.txt).mp4 20000000 "-c copy"
+            rm -rf ./qBittorrent/data/BT_backup/*
+            rm -rf ./qBittorrent/data/logs/*
+            rm -rf ./qBittorrent/downloads/*
 
       - name: Upload Video
         env:
