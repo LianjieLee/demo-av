@@ -38,9 +38,11 @@ class sehuatang:
         r = requests.get(url, headers=self.header)
         soup = BeautifulSoup(r.text, 'html.parser')
         title = soup.find('h1', {'class': "ts"}).text.strip().replace('\n', ' ')
+        title_link = f"<a href='{url}'>" + '<b>' + title + '</b>' + '</a>'
         post = soup.find('div', {'id': re.compile(r"post_\d*?")}).find('div', {'class': 't_fsz'})
         magnet = re.search(r'(magnet:\?xt=urn:btih:[0-9a-fA-F]{40})', post.text).group(1)
         print(magnet)
+        caption = title_link + '\n' + magnet
         name = re.search(r'(.+-C).torrent', post.text).group(1)
         print(name)
         img_urls = []
@@ -51,7 +53,7 @@ class sehuatang:
             else:
                 img_urls.append(self.url + i['file'])
         print(self.time(), title, "已获取", flush=True)
-        return title, magnet, name, img_urls
+        return caption, magnet, name, img_urls
 
     def time(self):
         strftime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
@@ -67,13 +69,13 @@ if __name__ == '__main__':
     se = sehuatang()
     se.getNewPost()
     url = se.url + se.new_post
-    title, magnet, name, img_urls = se.getPostContent(url)
+    caption, magnet, name, img_urls = se.getPostContent(url)
     with open('info/url.txt', 'w') as f:
         f.write(magnet)
     with open('info/name.txt', 'w') as f:
         f.write(name)
-    with open('info/title.txt', 'w') as f:
-        f.write(title)
+    with open('info/caption.txt', 'w') as f:
+        f.write(caption)
     for i in range(len(img_urls)):
         ua = {'User-Agent': Faker().user_agent()}
         pic = requests.get(img_urls[i], headers=ua)

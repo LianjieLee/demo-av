@@ -36,7 +36,7 @@ jobs:
           API_HASH: ${{ secrets.API_HASH }}
         run: |
             openssl enc -aes128 -pbkdf2 -d -in tg_client.aes128 -out tg_client.session -pass env:API_HASH
-            python3 uploader.py "@ccav_98" "$(cat info/title.txt)"
+            python3 uploader.py "@ccav_98" "$(cat info/caption.txt)"
             openssl enc -aes128 -pbkdf2 -in tg_client.session -out tg_client.aes128 -pass env:API_HASH && rm tg_client.session
 
       - name: Update repo

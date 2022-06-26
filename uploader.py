@@ -10,7 +10,7 @@ def send_video(api_id, api_hash, peer_name, video_list, caption):
     client = TelegramClient("tg_client", api_id, api_hash)
     client.start()
     client.connect()
-    client.send_file(peer_name, video_list, caption=caption, supports_streaming=True)
+    client.send_file(peer_name, video_list, caption=caption, supports_streaming=True, parse_mode='HTML')
 
 if __name__ == '__main__':
     api_id = os.getenv('API_ID')
