@@ -43,13 +43,15 @@ class sehuatang:
         print(magnet)
         name = re.search(r'(.+-C).torrent', post.text).group(1)
         print(name)
-        img = post.table.find('img')
-        if 'http' in img['file']:
-            poster = img['file']
-        else:
-            poster = self.url + img['file']
+        img_urls = []
+        imgs = post.table.find_all('img')
+        for i in imgs:
+            if 'http' in i['file']:
+                img_urls.append(i['file'])
+            else:
+                img_urls.append(self.url + i['file'])
         print(self.time(), title, "已获取", flush=True)
-        return title, magnet, name, poster
+        return title, magnet, name, img_urls
 
     def time(self):
         strftime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
@@ -65,13 +67,16 @@ if __name__ == '__main__':
     se = sehuatang()
     se.getNewPost()
     url = se.url + se.new_post
-    title, magnet, name, poster = se.getPostContent(url)
+    title, magnet, name, img_urls = se.getPostContent(url)
     with open('info/url.txt', 'w') as f:
         f.write(magnet)
     with open('info/name.txt', 'w') as f:
         f.write(name)
-    with open('info/poster.txt', 'w') as f:
-        f.write(poster)
     with open('info/title.txt', 'w') as f:
         f.write(title)
+    for i in range(len(img_urls)):
+        ua = {'User-Agent': Faker().user_agent()}
+        pic = requests.get(img_urls[i], headers=ua)
+        with open(f'pic-{i}.jpg', 'wb') as f:
+            f.write(pic.content)
     se.updateList()

@@ -17,8 +17,10 @@ if __name__ == '__main__':
     api_hash = os.getenv('API_HASH')
     peer_name = sys.argv[1]
     caption = sys.argv[2]
+    pic_list = glob("*.jpg")
     video_list = glob("*.mp4")
+    pic_list.sort()
     video_list.sort()
-    video_list.insert(0, "poster.jpg")
-    print(f"sending {video_list}", flush=True)
-    send_video(api_id, api_hash, peer_name, video_list, caption)
+    msg = pic_list + video_list
+    print(f"sending {msg}", flush=True)
+    send_video(api_id, api_hash, peer_name, msg, caption)
